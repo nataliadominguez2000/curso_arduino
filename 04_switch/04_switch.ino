@@ -1,11 +1,13 @@
-int dia= 7;
+int dia= 9 ;
 String nombreDia = "";
+int nota = 8;
+String calif = "";
 void setup() {
 
   Serial.begin(115200);
   delay(500);
   
-  // put your setup code here, to run once:
+  // // put your setup code here, to run once:
   switch (dia) {
   case 1: 
   nombreDia = "El dia es Lunes";
@@ -34,6 +36,26 @@ void setup() {
   }
 
   Serial.println(nombreDia);
+// --------------------------------------------------------------------------------------------
+switch (nota) {
+  case 1:
+  case 2:
+  case 3:
+  case 4:
+  calif = "Suspenso";
+  case 5 ... 6: 
+  calif ="Aprobado";
+  break;
+  case 7 ... 8: 
+  calif ="Notable";
+  break;
+  default: 
+  calif ="Sobresaliente ";
+  break;
+}
+
+Serial.println("La nota es "+ calif);
+
 }
 
 void loop() {
