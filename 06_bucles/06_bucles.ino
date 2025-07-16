@@ -22,12 +22,13 @@ void setup() {
   */
 
   //De 100 a 0 de 1 en 1
- /*
+  /*
   for(int i = 100; i >= 0; i-- ){
      Serial.println( "Numero: "+String(i));
    }
   */
 
+  /*
 String salida = "";
 
 //Bucles en dos dimensiones
@@ -39,9 +40,32 @@ String salida = "";
   }
 
   Serial.print(salida);
+  */
+
+  //Bucles infinitos
+  
+  int limite = 10;
+  int contador = 0; 
+  /*
+  for(;;){
+    Serial.print("Infinito: ");
+    Serial.println(contador);
+    contador ++;
+
+    if(contador == limite){
+      break;
+    }
+  }
+ */
+  //Bucles while
+  while (contador < limite) {
+  Serial.print("While : ");
+    Serial.println(contador);
+    contador ++;
+  }
+
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-
 }
