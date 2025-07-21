@@ -1,0 +1,48 @@
+{%extends 'base.html' %}
+
+{% block content %}
+   <table>
+    <tr>
+        <th>ID</th>
+        <th>PERSONA</th>
+        <th>TEMP</th>
+        <th>HUM</th>
+        <th>TSTAMP</th>
+    </tr>
+    <tbody>
+
+
+    {% for fila in filas%}
+    
+    <tr>
+        <td>{{fila[0]}}</td>
+        <td>{{fila[1]}}</td>
+        <td>{{fila[2]}}</td>
+        <td>{{fila[3]}}</td>
+        <td>{{fila[4]}}</td>
+    </tr>
+    {%endfor%}
+</tbody>
+</table>
+<div>
+    <br><br><br>
+<form action="{{url_for('send_data')}}" method="post">
+    <table>
+        <tr>
+            <td><label for="persona">Persona: </label></td>
+            <td><input type="text" id="persona" name="persona" /><br></td>
+        </tr>
+        <tr>
+            <td><label for="temp">Temperatura: </label></td>
+            <td><input type="text" id="temp" name="temp" /><br></td>
+        </tr>
+        <tr>
+            <td><label for="hum">Humedad: </label></td>
+            <td><input type="hum" id="hum" name="hum" /><br></td>
+        </tr>
+        <tr><td colspan="2"><input type="submit" id="send-signup" name="signup" value="Enviar" /></td></tr>
+    </table>
+    
+</form>
+</div>
+{% endblock %}
