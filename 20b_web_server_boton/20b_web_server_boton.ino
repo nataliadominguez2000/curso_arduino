@@ -1,16 +1,48 @@
-#include <WiFi.h>  //Incluye la libreria necesaria para manejar conexiones WiFi
-#include <WebServer.h>
+#include <WiFi.h>           // Librería para manejo de WiFi
+#include <WebServer.h>      // Librería para crear el servidor web
 
-#define LEDPIN 15
+#define LEDPIN 2
 bool ledEncendido = false;
+
+// Credenciales de WiFi
 char* ssid = "Aula 1";
 char* pwd = "Horus.2025";
 
-WebServer servidor(80);
+WebServer servidor(80);  // Puerto HTTP
 
-//Paginas
-
+// ====== Contenido HTML de las páginas ======
 String home = R"rawliteral(
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Página Principal</title>
+</head>
+<body>
+  <h1>Hola Mundo</h1>
+  <h2>Esta es la primera página</h2>
+  <a href="/segunda">Ir a la segunda página</a><br><br>
+  <a href="/led">Ir a la página encender LED</a>
+</body>
+</html>
+)rawliteral";
+
+String home2 = R"rawliteral(
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Segunda Página</title>
+</head>
+<body>
+  <h1>Esta es la segunda página</h1>
+</body>
+</html>
+)rawliteral";
+
+String led = R"rawliteral(
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -36,7 +68,6 @@ String home = R"rawliteral(
 </head>
 <body>
   <h1>Control del LED</h1>
-  <p>Estado del LED: <strong>%ESTADO%</strong></p>
   <form action="/toggle" method="POST">
     <button class="btn" type="submit">Encender/Apagar</button>
   </form>
@@ -44,45 +75,57 @@ String home = R"rawliteral(
 </html>
 )rawliteral";
 
+// ====== Setup ======
 void setup() {
   Serial.begin(115200);
   pinMode(LEDPIN, OUTPUT);
   digitalWrite(LEDPIN, LOW);
-  WiFi.mode(WIFI_STA);  //Configura el ESP32 como cliente WIFI
+
+  // Conexión WiFi
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pwd);
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
   }
-  Serial.print("\n");
-  Serial.print("Conectado a la IP: ");
-  Serial.println(WiFi.localIP());
+  Serial.println("\nConectado a la IP: " + WiFi.localIP().toString());
 
-  //solicitudes web
-  servidor.on("/", handle_OnConnect);  // No esta llamando a la funcion, si no que se ejecuta cuando pasa esto
- servidor.on("/toggle", HTTP_POST, handle_ToggleLED);
+  // Rutas del servidor
+  servidor.on("/", handle_Home);
+  servidor.on("/segunda", handle_Second);
+  servidor.on("/led", handle_LEDPage);
+  servidor.on("/toggle", HTTP_POST, handle_ToggleLED);
+
   servidor.begin();
   Serial.println("Servidor web iniciado");
 }
 
+// ====== Loop ======
 void loop() {
-  
-  servidor.handleClient(); //Escucha las peticiones de los clientes al servidor
+  servidor.handleClient();
 }
 
-//Funcion de respuesta a las paginas web
-void handle_OnConnect(){
-  String estadoLED = ledEncendido ? "ENCENDIDO" : "APAGADO";
-  String pagina = home;
-  pagina.replace("%ESTADO%",estadoLED);
-  servidor.send(200,"text/html",pagina); //Esta diciendo que el texto que hay en la variable home va a ser un texto estilo html si esta todo ok
+// ====== Manejadores de rutas ======
+void handle_Home() {
+  servidor.send(200, "text/html", home);
 }
-void handle_ToggleLED(){
+
+void handle_Second() {
+  servidor.send(200, "text/html", home2);
+}
+
+void handle_LEDPage() {
+  String pagina = led;
+  servidor.send(200, "text/html", pagina);
+}
+
+void handle_ToggleLED() {
+  // Cambiar estado del LED
   ledEncendido = !ledEncendido;
-  digitalWrite(LEDPIN, ledEncendido ? HIGH:LOW);
-  Serial.print(ledEncendido ? "LED ENCENDIDO":"LED APAGADO");
+  digitalWrite(LEDPIN, ledEncendido ? HIGH : LOW);
+  Serial.println(ledEncendido ? "LED ENCENDIDO" : "LED APAGADO");
 
-  servidor.sendHeader("Location", "/");
+  // Redirigir de nuevo a la página del LED
+  servidor.sendHeader("Location", "/led");
   servidor.send(303);
-
 }
