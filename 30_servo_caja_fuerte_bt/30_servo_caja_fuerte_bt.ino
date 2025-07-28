@@ -2,7 +2,7 @@
 #include <BluetoothSerial.h>
 
 #define PINSERVER 15  // Define el pin GPIO 15 como el pin de control del servo
-#define LEDROJO 13
+#define LEDROJO 13 //Define el pin LED del ROJO para que si la puerta esta abierta se encienda y si esta cerrada esta apagado
 #define LEDVERDE 14
 
 Servo miServo;  // Crea un objeto de tipo Servo
