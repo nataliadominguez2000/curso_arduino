@@ -25,5 +25,6 @@ def send_data():
     print(resp)
     return "" #redirect(url_for('index'))
 
+@app.rou
 
     
